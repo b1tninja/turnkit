@@ -13,10 +13,10 @@ __all__ = [
 
 
 def encode_end_of_candidates(component: int) -> bytes:
-    """Pending behaviour defined by RFC 8838.
+    """Pending behaviour defined by RFC 8838 sec. 13.
 
     Not implemented yet. See the ``trickle.encode_end_of_candidates()`` row in
     ROADMAP.md; this stub raises on purpose so nothing downstream mistakes it for working
     code.
     """
-    raise NotImplementedError("encode_end_of_candidates() is not implemented: RFC 8838")
+    raise NotImplementedError("encode_end_of_candidates() is not implemented: RFC 8838 sec. 13")

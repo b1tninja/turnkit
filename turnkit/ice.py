@@ -22,18 +22,18 @@ __all__ = [
 
 
 def gather_candidates(interfaces: list, relay: Allocation | None) -> list:
-    """Pending behaviour defined by RFC 8445.
+    """Pending behaviour defined by RFC 8445 sec. 5.1.
 
     Not implemented yet. See the ``ice.gather_candidates()`` row in ROADMAP.md; this stub
     raises on purpose so nothing downstream mistakes it for working code.
     """
-    raise NotImplementedError("gather_candidates() is not implemented: RFC 8445")
+    raise NotImplementedError("gather_candidates() is not implemented: RFC 8445 sec. 5.1")
 
 
 def schedule_checks(pairs: list, state: AgentState) -> list:
-    """Pending behaviour defined by RFC 8445.
+    """Pending behaviour defined by RFC 8445 sec. 6.1.
 
     Not implemented yet. See the ``ice.schedule_checks()`` row in ROADMAP.md; this stub
     raises on purpose so nothing downstream mistakes it for working code.
     """
-    raise NotImplementedError("schedule_checks() is not implemented: RFC 8445")
+    raise NotImplementedError("schedule_checks() is not implemented: RFC 8445 sec. 6.1")

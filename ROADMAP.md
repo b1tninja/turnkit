@@ -11,23 +11,27 @@ behaviour regressed. Reading the code and agreeing with it is not enough. That i
 Legend: `[ok]` implemented and pinned by a named test -- `[part]` partial, with what is
 missing stated -- `[ ]` not implemented -- `[no]` deliberate non-goal.
 
+A Where cell marked `(to be written)` names the test that will pin the row once it exists; no
+such test has been written yet, and the row cannot leave `[ ]` until it has. The Milestone
+column places the row on the ladder in section 2, and `-` means it is not placed yet.
+
 Update the affected row in the same commit that changes the behaviour. A row and its test
 drift apart within one release, and the document becomes useless exactly when it is needed.
 
 ## 1. Obligations
 
-| Obligation | Spec | Status | Where |
-|---|---|---|---|
-| `message.encode_message()` | RFC 8489 | `[ ]` | `tests/test_obligations.py::encode_message` |
-| `message.decode_message()` | RFC 8489 | `[ ]` | `tests/test_obligations.py::decode_message` |
-| `allocation.allocate()` | RFC 8656 | `[ ]` | `tests/test_obligations.py::allocate` |
-| `allocation.refresh()` | RFC 8656 | `[ ]` | `tests/test_obligations.py::refresh` |
-| `permission.create_permission()` | RFC 8656 | `[ ]` | `tests/test_obligations.py::create_permission` |
-| `credentials.rest_credentials()` | RFC 7635 | `[ ]` | `tests/test_obligations.py::rest_credentials` |
-| `ice.gather_candidates()` | RFC 8445 | `[ ]` | `tests/test_obligations.py::gather_candidates` |
-| `ice.schedule_checks()` | RFC 8445 | `[ ]` | `tests/test_obligations.py::schedule_checks` |
-| `sansio.on_binding_response()` | RFC 8445, RFC 8863 | `[ ]` | `tests/test_obligations.py::on_binding_response` |
-| `trickle.encode_end_of_candidates()` | RFC 8838 | `[ ]` | `tests/test_obligations.py::encode_end_of_candidates` |
+| Obligation | Spec | Status | Where | Milestone |
+|---|---|---|---|---|
+| `message.encode_message()` | RFC 8489 sec. 5, sec. 14 | `[ ]` | `tests/test_obligations.py::test_encode_message` (to be written) | M1 |
+| `message.decode_message()` | RFC 8489 sec. 5, sec. 14 | `[ ]` | `tests/test_obligations.py::test_decode_message` (to be written) | M1 |
+| `allocation.allocate()` | RFC 8656 sec. 7 | `[ ]` | `tests/test_obligations.py::test_allocate` (to be written) | M3 |
+| `allocation.refresh()` | RFC 8656 sec. 8 | `[ ]` | `tests/test_obligations.py::test_refresh` (to be written) | M3 |
+| `permission.create_permission()` | RFC 8656 sec. 10 | `[ ]` | `tests/test_obligations.py::test_create_permission` (to be written) | M4 |
+| `credentials.rest_credentials()` | RFC 7635 | `[ ]` | `tests/test_obligations.py::test_rest_credentials` (to be written) | M3 |
+| `ice.gather_candidates()` | RFC 8445 sec. 5.1 | `[ ]` | `tests/test_obligations.py::test_gather_candidates` (to be written) | M5 |
+| `ice.schedule_checks()` | RFC 8445 sec. 6.1 | `[ ]` | `tests/test_obligations.py::test_schedule_checks` (to be written) | M5 |
+| `sansio.on_binding_response()` | RFC 8445 sec. 7.2, RFC 8863 | `[ ]` | `tests/test_obligations.py::test_on_binding_response` (to be written) | M5 |
+| `trickle.encode_end_of_candidates()` | RFC 8838 sec. 13 | `[ ]` | `tests/test_obligations.py::test_encode_end_of_candidates` (to be written) | M5 |
 
 ## 2. Milestones
 
@@ -43,7 +47,7 @@ the code existing. Coverage in `pyproject.toml` ratchets in the same commit.
 
 ## 3. Errata watch
 
-- RFC 8489 carries 3 verified errata.
+- RFC 8489 carries 3 verified errata. 6268 (Technical) corrects the Appendix B.1 test vector: the printed message length counts the 20-byte header, and the vector lacks the PASSWORD-ALGORITHM attribute its SHA-256 key needs, so test against the corrected vector, not the published one. 6290 (Technical) fixes the bit order of the sec. 18.1 bit set; 8434 is a typo.
 - RFC 8445 is updated by RFC 8863, and RFC 8656 is the successor to RFC 5766 and RFC 6156: do not copy recipes from either predecessor.
 - RFC 8838 and RFC 8863 report no errata as of 2026-10-29.
 
@@ -58,6 +62,8 @@ the code existing. Coverage in `pyproject.toml` ratchets in the same commit.
 ## 5. Open questions
 
 - does the ICE agent need to be wire compatible with aioice for a shared test harness
+- credentials.rest_credentials takes a username and shared secret, but RFC 7635 obtains an OAuth access token (sec. 4) and defines no such credential: rename the row to the RFC 7635 token, or cite the document that defines the shared-secret scheme
+- M2 names the UDP, TCP and TLS transports, but no api row sits on it: add a transport row, or drop the rung
 
 ## 6. Publication checklist
 

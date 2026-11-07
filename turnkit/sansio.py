@@ -21,9 +21,11 @@ __all__ = [
 
 
 def on_binding_response(event: Received, now: float) -> AgentState:
-    """Pending behaviour defined by RFC 8445, RFC 8863.
+    """Pending behaviour defined by RFC 8445 sec. 7.2, RFC 8863.
 
     Not implemented yet. See the ``sansio.on_binding_response()`` row in ROADMAP.md; this
     stub raises on purpose so nothing downstream mistakes it for working code.
     """
-    raise NotImplementedError("on_binding_response() is not implemented: RFC 8445, RFC 8863")
+    raise NotImplementedError(
+        "on_binding_response() is not implemented: RFC 8445 sec. 7.2, RFC 8863"
+    )

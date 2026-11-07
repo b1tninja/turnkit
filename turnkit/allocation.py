@@ -23,18 +23,18 @@ __all__ = [
 
 
 async def allocate(server: Endpoint, credentials: Credentials) -> Allocation:
-    """Pending behaviour defined by RFC 8656.
+    """Pending behaviour defined by RFC 8656 sec. 7.
 
     Not implemented yet. See the ``allocation.allocate()`` row in ROADMAP.md; this stub
     raises on purpose so nothing downstream mistakes it for working code.
     """
-    raise NotImplementedError("allocate() is not implemented: RFC 8656")
+    raise NotImplementedError("allocate() is not implemented: RFC 8656 sec. 7")
 
 
 async def refresh(allocation: Allocation) -> Allocation:
-    """Pending behaviour defined by RFC 8656.
+    """Pending behaviour defined by RFC 8656 sec. 8.
 
     Not implemented yet. See the ``allocation.refresh()`` row in ROADMAP.md; this stub
     raises on purpose so nothing downstream mistakes it for working code.
     """
-    raise NotImplementedError("refresh() is not implemented: RFC 8656")
+    raise NotImplementedError("refresh() is not implemented: RFC 8656 sec. 8")

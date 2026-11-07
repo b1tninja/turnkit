@@ -54,7 +54,7 @@ document, which is the honest grain size for a plan. See [docs/rfc-map.md](docs/
 
 ### Errata watch
 
-- RFC 8489 carries 3 verified errata.
+- RFC 8489 carries 3 verified errata. 6268 (Technical) corrects the Appendix B.1 test vector: the printed message length counts the 20-byte header, and the vector lacks the PASSWORD-ALGORITHM attribute its SHA-256 key needs, so test against the corrected vector, not the published one. 6290 (Technical) fixes the bit order of the sec. 18.1 bit set; 8434 is a typo.
 - RFC 8445 is updated by RFC 8863, and RFC 8656 is the successor to RFC 5766 and RFC 6156: do not copy recipes from either predecessor.
 - RFC 8838 and RFC 8863 report no errata as of 2026-10-29.
 
@@ -81,7 +81,8 @@ document, which is the honest grain size for a plan. See [docs/rfc-map.md](docs/
 ## Install
 
 ```bash
-git clone https://github.com/b1tninja/turnkit.cd turnkit
+git clone https://github.com/b1tninja/turnkit.git
+cd turnkit
 python -m venv .venv
 source .venv/bin/activate          # Windows: .venv\\Scripts\\Activate.ps1
 pip install -e ".[dev]"

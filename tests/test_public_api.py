@@ -15,16 +15,16 @@ import pytest
 import turnkit as package
 
 SURFACE = [
-    ("message", "encode_message", "RFC 8489"),
-    ("message", "decode_message", "RFC 8489"),
-    ("allocation", "allocate", "RFC 8656"),
-    ("allocation", "refresh", "RFC 8656"),
-    ("permission", "create_permission", "RFC 8656"),
+    ("message", "encode_message", "RFC 8489 sec. 5, sec. 14"),
+    ("message", "decode_message", "RFC 8489 sec. 5, sec. 14"),
+    ("allocation", "allocate", "RFC 8656 sec. 7"),
+    ("allocation", "refresh", "RFC 8656 sec. 8"),
+    ("permission", "create_permission", "RFC 8656 sec. 10"),
     ("credentials", "rest_credentials", "RFC 7635"),
-    ("ice", "gather_candidates", "RFC 8445"),
-    ("ice", "schedule_checks", "RFC 8445"),
-    ("sansio", "on_binding_response", "RFC 8445, RFC 8863"),
-    ("trickle", "encode_end_of_candidates", "RFC 8838"),
+    ("ice", "gather_candidates", "RFC 8445 sec. 5.1"),
+    ("ice", "schedule_checks", "RFC 8445 sec. 6.1"),
+    ("sansio", "on_binding_response", "RFC 8445 sec. 7.2, RFC 8863"),
+    ("trickle", "encode_end_of_candidates", "RFC 8838 sec. 13"),
 ]
 
 
@@ -42,7 +42,10 @@ def test_surface_is_documented(module_name, fn, cite):
     module = importlib.import_module(package.__name__ + "." + module_name)
     target = getattr(module, fn)
     assert target.__doc__, fn + " needs a docstring"
-    assert cite in target.__doc__, fn + " must cite the document that defines it"
+    # Docstrings are wrapped, so a long citation can span a line break; compare words, not layout.
+    assert " ".join(cite.split()) in " ".join(target.__doc__.split()), (
+        fn + " must cite the document that defines it"
+    )
 
 
 @pytest.mark.parametrize(("module_name", "fn", "cite"), SURFACE)

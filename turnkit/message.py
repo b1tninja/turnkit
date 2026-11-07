@@ -21,18 +21,18 @@ __all__ = [
 
 
 def encode_message(msg: StunMessage, key: bytes | None) -> bytes:
-    """Pending behaviour defined by RFC 8489.
+    """Pending behaviour defined by RFC 8489 sec. 5, sec. 14.
 
     Not implemented yet. See the ``message.encode_message()`` row in ROADMAP.md; this
     stub raises on purpose so nothing downstream mistakes it for working code.
     """
-    raise NotImplementedError("encode_message() is not implemented: RFC 8489")
+    raise NotImplementedError("encode_message() is not implemented: RFC 8489 sec. 5, sec. 14")
 
 
 def decode_message(raw: bytes) -> StunMessage:
-    """Pending behaviour defined by RFC 8489.
+    """Pending behaviour defined by RFC 8489 sec. 5, sec. 14.
 
     Not implemented yet. See the ``message.decode_message()`` row in ROADMAP.md; this
     stub raises on purpose so nothing downstream mistakes it for working code.
     """
-    raise NotImplementedError("decode_message() is not implemented: RFC 8489")
+    raise NotImplementedError("decode_message() is not implemented: RFC 8489 sec. 5, sec. 14")

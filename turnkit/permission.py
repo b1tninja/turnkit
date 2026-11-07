@@ -21,9 +21,9 @@ __all__ = [
 
 
 def create_permission(allocation: Allocation, peer: tuple) -> Permission:
-    """Pending behaviour defined by RFC 8656.
+    """Pending behaviour defined by RFC 8656 sec. 10.
 
     Not implemented yet. See the ``permission.create_permission()`` row in ROADMAP.md;
     this stub raises on purpose so nothing downstream mistakes it for working code.
     """
-    raise NotImplementedError("create_permission() is not implemented: RFC 8656")
+    raise NotImplementedError("create_permission() is not implemented: RFC 8656 sec. 10")

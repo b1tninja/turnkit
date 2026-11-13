@@ -9,7 +9,13 @@ import unicodedata
 import pytest
 
 from turnkit import _precis_table, precis
-from turnkit.precis import PrecisError, compare, derived_property, opaque_string
+from turnkit.precis import (
+    PrecisError,
+    compare,
+    derived_property,
+    derived_property_from_database,
+    opaque_string,
+)
 
 
 def test_table_covers_every_code_point_once_and_carries_provenance():
@@ -115,4 +121,59 @@ def test_contextual_rules_are_evaluated_per_occurrence():
 
 
 def test_module_surface():
-    assert set(precis.__all__) == {"PrecisError", "compare", "derived_property", "opaque_string"}
+    assert set(precis.__all__) == {
+        "PrecisError",
+        "compare",
+        "derived_property",
+        "derived_property_from_database",
+        "opaque_string",
+    }
+
+
+def test_database_mode_agrees_with_the_registry():
+    # RFC 8264 sec. 8 computed from the interpreter's database equals the IANA registry for
+    # every code point Unicode 6.3.0 assigned (the registry says UNASSIGNED for the rest)
+    mismatches = [
+        (hex(code), derived_property(code), derived_property_from_database(code))
+        for code in range(0x110000)
+        if derived_property(code) != "UNASSIGNED"
+        and derived_property(code) != derived_property_from_database(code)
+    ]
+    assert mismatches == []
+
+
+def test_database_mode_cf_has_no_compatibility_decomposition():
+    # the Cf shortcut in derived_property_from_database is exact only while this holds
+    for code in range(0x110000):
+        if unicodedata.category(chr(code)) == "Cf":
+            assert unicodedata.normalize("NFKC", chr(code)) == chr(code), hex(code)
+            assert derived_property_from_database(code) in ("DISALLOWED", "CONTEXTJ"), hex(code)
+
+
+@pytest.mark.parametrize(
+    ("code_point", "expected"),
+    [
+        (0x1F9D0, "ID_DIS or FREE_PVAL"),  # emoji assigned in Unicode 10.0
+        (0x180F, "DISALLOWED"),  # Mongolian free variation selector four, Default_Ignorable
+        (0x0378, "UNASSIGNED"),
+        (0xFFFF, "DISALLOWED"),  # noncharacter
+        (0x1100, "DISALLOWED"),  # conjoining jamo
+        (0x00B7, "CONTEXTO"),
+    ],
+)
+def test_database_mode_spot_checks(code_point, expected):
+    if code_point in (0x1F9D0, 0x180F) and unicodedata.category(chr(code_point)) == "Cn":
+        pytest.skip("this interpreter's Unicode database predates the code point")
+    assert derived_property_from_database(code_point) == expected
+
+
+def test_unicode_database_is_an_opt_in_for_later_code_points():
+    emoji = "pass🧐"  # assigned in Unicode 10.0
+    with pytest.raises(PrecisError, match=r"6.3.0"):
+        opaque_string(emoji)  # the default refuses, whatever the interpreter
+    assert opaque_string(emoji, unicode_database=True) == emoji
+    assert compare(emoji, emoji, unicode_database=True)
+    with pytest.raises(PrecisError, match=re.escape(unicodedata.unidata_version)):
+        opaque_string("a­b", unicode_database=True)  # soft hyphen stays refused
+    assert opaque_string("Pa ss~W0rd!", unicode_database=True) == "Pa ss~W0rd!"
+    assert opaque_string("pässword", unicode_database=True) == "pässword"

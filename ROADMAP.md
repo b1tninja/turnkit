@@ -22,12 +22,36 @@ drift apart within one release, and the document becomes useless exactly when it
 
 | Obligation | Spec | Status | Where | Milestone |
 |---|---|---|---|---|
-| `message.encode_message()` | RFC 8489 sec. 5, sec. 14 | `[ ]` | `tests/test_obligations.py::test_encode_message` (to be written) | M1 |
-| `message.decode_message()` | RFC 8489 sec. 5, sec. 14 | `[ ]` | `tests/test_obligations.py::test_decode_message` (to be written) | M1 |
+| `message.decode_message()` | RFC 8489 sec. 5, sec. 14; RFC 5769 sec. 2.1 to 2.4 | `[ok]` | `tests/test_message.py::test_rfc5769_sample_request` | M1 |
+| `message.encode_message()` (optionally signs: MESSAGE-INTEGRITY or -SHA256, then FINGERPRINT last) | RFC 8489 sec. 5, sec. 14, sec. 14.5 to 14.7 | `[ok]` | `tests/test_integrity.py::test_encode_signs_and_verifies_both_algorithms` | M1 |
+| `message.make_message_type()` (the class and method bit interleave) | RFC 8489 sec. 5 Figure 3 | `[ok]` | `tests/test_message.py::test_type_bit_interleave` | M1 |
+| `message.looks_like_stun()` (cheap demultiplexing test for srtpkit and DTLS-SRTP) | RFC 8489 sec. 5 | `[ok]` | `tests/test_message.py::test_looks_like_stun_demux` | M1 |
+| `message.stream_message_length()` (length from the first 20 octets, for a TCP reader) | RFC 8489 sec. 5 | `[ok]` | `tests/test_message.py::test_stream_message_length_from_the_header_alone` | M1 |
+| `attributes.xor_mapped_address()` (IPv4 masks with the cookie, IPv6 with cookie and transaction ID) | RFC 8489 sec. 14.2; RFC 5769 sec. 2.2, 2.3 | `[ok]` | `tests/test_message.py::test_ipv6_xor_mapped_address_roundtrip` | M1 |
+| `attributes.decode_error_code()` (ERROR-CODE, class 3 to 6) | RFC 8489 sec. 14.8 | `[ok]` | `tests/test_turn_attributes.py::test_error_code_attribute` | M1 |
+| `attributes.decode_password_algorithms()` (PASSWORD-ALGORITHM and -S lists) | RFC 8489 sec. 14.11, sec. 14.12 | `[ok]` | `tests/test_turn_attributes.py::test_unknown_attributes_and_password_algorithms` | M1 |
+| `integrity.message_integrity_value()` (HMAC-SHA1, length field rewritten) | RFC 8489 sec. 14.5; RFC 5769 sec. 2.1 to 2.3 | `[ok]` | `tests/test_integrity.py::test_rfc5769_hmac_sha1` | M1 |
+| `integrity.fingerprint_value()` (CRC-32 XOR 0x5354554e, last attribute) | RFC 8489 sec. 14.7; RFC 5769 sec. 2.1 to 2.3 | `[ok]` | `tests/test_integrity.py::test_rfc5769_fingerprint` | M1 |
+| `integrity.check_message_integrity()` (SHA-1 and SHA-256, 16 to 32 octets) | RFC 8489 sec. 14.5, sec. 14.6, sec. 9 para 3 | `[ok]` | `tests/test_integrity.py::test_verify_rejects_one_bit_flip_in_every_byte_before_integrity` | M1 |
+| `credentials.short_term_key()` | RFC 8489 sec. 9.1.1 | `[ok]` | `tests/test_integrity.py::test_rfc5769_hmac_sha1` | M1 |
+| `credentials.long_term_key()` (MD5 and SHA-256, on prepared strings) | RFC 8489 sec. 9.2.2, sec. 18.5.1; RFC 5769 sec. 2.4 | `[ok]` | `tests/test_integrity.py::test_rfc5769_long_term_vector_with_the_prepared_password` | M1 |
+| `credentials.userhash()` | RFC 8489 sec. 14.4; appendix B.1 | `[ok]` | `tests/test_integrity.py::test_rfc8489_b1_userhash` | M1 |
+| `credentials.opaque-string` (RFC 8265 preparation for non-ASCII usernames, realms and passwords; today ASCII only, otherwise `NotImplementedError`) | RFC 8265, RFC 8489 sec. 9.2.2 | `[ ]` | `tests/test_integrity.py::test_opaque_string_vectors` (to be written; needs the RFC 8265 tables) | M3 |
+| `integrity.sha256-vector` (the printed RFC 8489 appendix B.1 vector is reproducible only with the erroneous length 0x9c, which pins erratum 6268; no corrected vector exists to run) | RFC 8489 appendix B.1, erratum 6268 | `[part]` | `tests/test_integrity.py::test_rfc8489_b1_printed_vector_only_matches_the_erroneous_length` | M1 |
+| `turn_attributes.encode_requested_transport()` (and the other Table 5 attributes: CHANNEL-NUMBER, LIFETIME, XOR-PEER-ADDRESS, DATA, XOR-RELAYED-ADDRESS, REQUESTED-ADDRESS-FAMILY, EVEN-PORT, DONT-FRAGMENT, RESERVATION-TOKEN, ADDITIONAL-ADDRESS-FAMILY, ADDRESS-ERROR-CODE, ICMP) | RFC 8656 sec. 18 | `[ok]` | `tests/test_turn_attributes.py::test_allocate_request_roundtrip_with_turn_attributes` | M3 |
+| `turn_attributes.decode_icmp()` (8-bit type and code, erratum 8901 reading, reported not verified) | RFC 8656 sec. 18.13, erratum 8901 | `[ok]` | `tests/test_turn_attributes.py::test_icmp_fields_are_8_bits_each_per_erratum_8901` | M4 |
+| `turn_attributes.decode_channel_data()` (padding over TCP, reserved range 0x5000 to 0xFFFF discarded) | RFC 8656 sec. 12.4 to 12.6 | `[ok]` | `tests/test_turn_attributes.py::test_channel_data_udp_and_stream_padding` | M4 |
+| `turn_attributes.error-codes` (403, 437, 440, 441, 442, 443, 486, 508 are carried by `attributes.encode_error_code`; no named constants or handling yet) | RFC 8656 sec. 19 | `[part]` | `tests/test_turn_attributes.py::test_address_error_code_layout` | M3 |
 | `allocation.allocate()` | RFC 8656 sec. 7 | `[ ]` | `tests/test_obligations.py::test_allocate` (to be written) | M3 |
 | `allocation.refresh()` | RFC 8656 sec. 8 | `[ ]` | `tests/test_obligations.py::test_refresh` (to be written) | M3 |
 | `permission.create_permission()` | RFC 8656 sec. 10 | `[ ]` | `tests/test_obligations.py::test_create_permission` (to be written) | M4 |
-| `credentials.rest_credentials()` | RFC 7635 | `[ ]` | `tests/test_obligations.py::test_rest_credentials` (to be written) | M3 |
+| `credentials.rest-credentials` (the timestamped-username, HMAC-password TURN REST scheme; RFC 7635 does not define it, it defines OAuth 2.0 access tokens for STUN, so the row cited a document that says something else; no RFC defines the scheme and the draft that does is not in rfclib) | - | `[no]` | decision recorded in section 5 | - |
+| `credentials.oauth-access-token` (RFC 7635 third-party authorization: access token, mac_key as the HMAC key; sections 4 to 6 and the 4 errata on file are unread) | RFC 7635 | `[ ]` | `tests/test_integrity.py::test_rfc7635_token_key` (to be written) | M3 |
+| `transport.udp-tcp-tls` (retransmission schedule RTO and Rc/Rm, stream framing by `stream_message_length`; RFC 8489 sec. 6.2 unread) | RFC 8489 sec. 6.2 | `[ ]` | `tests/test_transport.py::test_rto_schedule` (to be written) | M2 |
+| `sansio.on_allocate_response()` (401 plus nonce replay, 438 stale nonce) | RFC 8656 sec. 7.4, RFC 8489 sec. 9.2.5 | `[ ]` | `tests/test_sansio.py::test_allocate_401_then_438` (to be written) | M3 |
+| `permission.channel-bind` (ChannelBind request, binding lifetime) and `mobility` (MOBILITY-TICKET) | RFC 8656 sec. 12, RFC 8016 | `[ ]` | `tests/test_permission.py::test_channel_bind` (to be written) | M4 |
+| `ice.candidate_priority()` (and `pair_priority()`) | RFC 8445 sec. 5.1.2, sec. 6.1.2.3 | `[ ]` | `tests/test_ice_priority.py::test_priority_formula` (to be written) | M5 |
+| `trickle.generate-end-of-candidates` (rename of `trickle.encode_end_of_candidates()`: RFC 8838 sec. 13 says when to generate it, sec. 14 how to receive it, and the encoding belongs to the signalling protocol, not to this library) | RFC 8838 sec. 13, sec. 14 | `[ ]` | `tests/test_trickle.py::test_end_of_candidates` (to be written) | M5 |
 | `ice.gather_candidates()` | RFC 8445 sec. 5.1 | `[ ]` | `tests/test_obligations.py::test_gather_candidates` (to be written) | M5 |
 | `ice.schedule_checks()` | RFC 8445 sec. 6.1 | `[ ]` | `tests/test_obligations.py::test_schedule_checks` (to be written) | M5 |
 | `sansio.on_binding_response()` | RFC 8445 sec. 7.2, RFC 8863 | `[ ]` | `tests/test_obligations.py::test_on_binding_response` (to be written) | M5 |
@@ -50,6 +74,11 @@ the code existing. Coverage in `pyproject.toml` ratchets in the same commit.
 - RFC 8489 carries 3 verified errata. 6268 (Technical) corrects the Appendix B.1 test vector: the printed message length counts the 20-byte header, and the vector lacks the PASSWORD-ALGORITHM attribute its SHA-256 key needs, so test against the corrected vector, not the published one. 6290 (Technical) fixes the bit order of the sec. 18.1 bit set; 8434 is a typo.
 - RFC 8445 is updated by RFC 8863, and RFC 8656 is the successor to RFC 5766 and RFC 6156: do not copy recipes from either predecessor.
 - RFC 8838 and RFC 8863 report no errata as of 2026-10-29.
+- RFC 8489 erratum 6268 is pinned by `tests/test_integrity.py::test_rfc8489_b1_printed_vector_only_matches_the_erroneous_length`: the published SHA-256 MAC reproduces only with the wrong length 0x9c.
+- RFC 8489 erratum 6290 (bit order of the sec. 18.1 security-feature set) contradicts the sec. 9.2 paragraph 5 text, which says bit 0 is the most significant bit of the first byte. The nonce-cookie security features are not implemented; resolve the contradiction before writing them.
+- RFC 8656 has one erratum on file, 8901 (reported, technical): the ICMP attribute figure shows 7-bit and 9-bit fields, and the code reads them as 8 bits each, as ICMP defines.
+- RFC 5769 (the test-vector document, informational, current) has one erratum on file, 4776 (held, editorial) proposing a different SOFTWARE string; the printed bytes are the vector and the tests use them.
+- RFC 7635 has four errata on file (4826 and 4923 held; 5059 and 5060 reported), all technical, none read in depth.
 
 ## 4. Deliberate non-goals
 
@@ -62,8 +91,9 @@ the code existing. Coverage in `pyproject.toml` ratchets in the same commit.
 ## 5. Open questions
 
 - does the ICE agent need to be wire compatible with aioice for a shared test harness
-- credentials.rest_credentials takes a username and shared secret, but RFC 7635 obtains an OAuth access token (sec. 4) and defines no such credential: rename the row to the RFC 7635 token, or cite the document that defines the shared-secret scheme
-- M2 names the UDP, TCP and TLS transports, but no api row sits on it: add a transport row, or drop the rung
+- **Decided in this pass: `credentials.rest_credentials`.** RFC 7635 (checked through rfclib 2026-11-13) is OAuth 2.0 third-party authorization for STUN. It contains no timestamped-username scheme, and a search of the RFC for it found nothing. The row is now a `[no]` non-goal naming the problem, the stub function is removed, and `credentials.oauth-access-token` is the honest RFC 7635 row. Owner: confirm `[no]`, or name a document to cite for the REST scheme (an Internet-Draft, which rfclib does not hold).
+- M2 transports now have a row (`transport.udp-tcp-tls`) but RFC 8489 sec. 6.2 is unread.
+- OpaqueString: whether to carry the RFC 8265 PRECIS tables (a Unicode data dependency, or a generated table) or to stay ASCII-only with prepared-string input. RFC 5769 sec. 2.4 and RFC 8489 appendix B.1 both need the prepared form of a non-ASCII password.
 
 ## 6. Publication checklist
 

@@ -54,8 +54,10 @@ rather than merely incomplete.
 3. **Normative text is never paraphrased from memory.** Fetch it with `rfclib` and
    cite the section. If the text you fetch does not say what the obligation claims,
    the obligation is wrong: fix the roadmap row and say so in the commit.
-4. **Dependencies.** `pyproject.toml` here declares no runtime dependencies. Adding a runtime
-   dependency needs a paragraph of justification in `docs/strategy.md` explaining
+4. **Dependencies.** `pyproject.toml` here declares no runtime dependencies: standard library
+   only (`hmac`, `hashlib`, `zlib`, `ipaddress`, `ssl`). The `cryptography` package may be used for
+   cryptographic primitives; nothing needs it yet. Everything else, every wire format, is ours.
+   Adding a runtime dependency needs a paragraph of justification in `docs/strategy.md` explaining
    why the standard library is not enough.
 5. **Scope.** What is deliberately absent is listed under Non-goals in `README.md`.
    An agent that "helpfully" implements a non-goal has expanded the API surface that
@@ -66,6 +68,8 @@ rather than merely incomplete.
 - RFC 8489 carries 3 verified errata. 6268 (Technical) corrects the Appendix B.1 test vector: the printed message length counts the 20-byte header, and the vector lacks the PASSWORD-ALGORITHM attribute its SHA-256 key needs, so test against the corrected vector, not the published one. 6290 (Technical) fixes the bit order of the sec. 18.1 bit set; 8434 is a typo.
 - RFC 8445 is updated by RFC 8863, and RFC 8656 is the successor to RFC 5766 and RFC 6156: do not copy recipes from either predecessor.
 - RFC 8838 and RFC 8863 report no errata as of 2026-10-29.
+- RFC 8489 appendix B.1 as printed cannot be validated by a correct implementation (erratum 6268): see `tests/test_integrity.py`. The RFC 5769 vectors are in `tests/vectors.py`.
+- RFC 7635 is OAuth token authentication for STUN. It does not define a REST credential; do not cite it for one.
 
 ## Protocol work
 

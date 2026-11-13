@@ -5,10 +5,14 @@
      the badges stay commented out until the tag exists.
 -->
 
-**Pre-alpha shell.** The package surface, the obligation matrix and the CI gates exist.
-No protocol behaviour is implemented: every public function raises `NotImplementedError`,
-and the test suite records that rather than hiding it. Read
-[ROADMAP.md](ROADMAP.md) before depending on any of it.
+**Pre-alpha.** The STUN message codec, the attributes, MESSAGE-INTEGRITY (HMAC-SHA1 and
+SHA-256), FINGERPRINT, the short- and long-term keys, the TURN attributes and ChannelData are
+implemented and tested against the RFC 5769 vectors. Allocation, permissions, transports and
+ICE are not: those functions still raise `NotImplementedError`. Read
+[ROADMAP.md](ROADMAP.md) for each row's status before depending on any of it.
+
+**Dependencies.** None at runtime: the standard library only. The `cryptography` package is
+allowed for cryptographic primitives and nothing needs it yet.
 
 turnkit -- STUN, TURN and ICE on asyncio
 
@@ -62,11 +66,15 @@ document, which is the honest grain size for a plan. See [docs/rfc-map.md](docs/
 
 | Module | Responsibility |
 |---|---|
-| `message` | STUN message, attribute and integrity codec (RFC 8489) |
+| `message` | STUN message codec (RFC 8489) |
+| `wire` | header and attribute scanner shared by decoding and integrity checks |
+| `attributes` | STUN attribute values: addresses, errors, algorithms (RFC 8489) |
+| `integrity` | MESSAGE-INTEGRITY, MESSAGE-INTEGRITY-SHA256, FINGERPRINT (RFC 8489) |
+| `turn_attributes` | TURN attributes, error codes and ChannelData (RFC 8656) |
 | `transport` | UDP, TCP and TLS transports with framing (RFC 8489) |
 | `allocation` | TURN allocate, refresh, lifetime and reallocation (RFC 8656) |
 | `permission` | permissions and channel bindings (RFC 8656) |
-| `credentials` | long-term credentials, nonce handling, REST tokens (RFC 8489, RFC 7635) |
+| `credentials` | short-term and long-term keys, USERHASH (RFC 8489); not the REST scheme, see ROADMAP |
 | `ice` | ICE agent: candidates, check scheduling, nomination (RFC 8445) |
 | `trickle` | incremental candidate exchange (RFC 8838) |
 | `sansio` | pure agent core for virtual clock testing |

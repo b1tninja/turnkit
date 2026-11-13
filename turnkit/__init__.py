@@ -14,17 +14,20 @@ from __future__ import annotations
 from . import (
     allocation,
     apps,
+    attributes,
     cli,
     credentials,
     ice,
+    integrity,
     message,
     permission,
     sansio,
     transport,
     trickle,
+    turn_attributes,
+    wire,
 )
 from .allocation import allocate, refresh
-from .credentials import rest_credentials
 from .ice import gather_candidates, schedule_checks
 from .message import decode_message, encode_message
 from .permission import create_permission
@@ -38,6 +41,7 @@ __all__ = [
     "allocate",
     "allocation",
     "apps",
+    "attributes",
     "cli",
     "create_permission",
     "credentials",
@@ -46,13 +50,15 @@ __all__ = [
     "encode_message",
     "gather_candidates",
     "ice",
+    "integrity",
     "message",
     "on_binding_response",
     "permission",
     "refresh",
-    "rest_credentials",
     "sansio",
     "schedule_checks",
     "transport",
     "trickle",
+    "turn_attributes",
+    "wire",
 ]

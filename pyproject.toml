@@ -81,7 +81,7 @@ source = ["turnkit"]
 # coverage for the line that raises. Raise this in the commit that implements a
 # milestone, never in a commit that only adds tests, so the number keeps meaning
 # "this behaviour is exercised" rather than "this file was imported".
-fail_under = 45
+fail_under = 85
 show_missing = true
 exclude_lines = [
   "if __name__ == .__main__.:",
@@ -104,7 +104,9 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 # S101 in tests is the policy, S311 is a seeded generator rather than a token, and a
 # test double has to accept parameters it ignores, which ARG would otherwise flag.
-"tests/*" = ["S101", "S106", "S311", "ARG001", "ARG002"]
+# PT018: the vector tests assert several fields of one decoded message in a line on purpose.
+# S105: the passwords in tests/vectors.py are the published RFC 5769 test values.
+"tests/*" = ["S101", "S105", "S106", "S311", "ARG001", "ARG002", "PT018"]
 
 [tool.ruff.format]
 quote-style = "double"

@@ -20,7 +20,6 @@ SURFACE = [
     ("allocation", "allocate", "RFC 8656 sec. 7"),
     ("allocation", "refresh", "RFC 8656 sec. 8"),
     ("permission", "create_permission", "RFC 8656 sec. 10"),
-    ("credentials", "rest_credentials", "RFC 7635"),
     ("ice", "gather_candidates", "RFC 8445 sec. 5.1"),
     ("ice", "schedule_checks", "RFC 8445 sec. 6.1"),
     ("sansio", "on_binding_response", "RFC 8445 sec. 7.2, RFC 8863"),

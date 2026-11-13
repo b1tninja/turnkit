@@ -1,13 +1,11 @@
 """STUN credential keys: short-term, long-term and USERHASH (RFC 8489 sec. 9.1.1, 9.2.2, 14.4).
 
-String preparation is the open part. RFC 8489 requires usernames, realms and passwords to
-be processed with the OpaqueString profile of RFC 8265 before use. That profile needs
-Unicode normalisation and PRECIS tables this library does not carry, so ``opaque_string``
-accepts ASCII text (printable characters and space, which OpaqueString leaves unchanged)
-and raises ``NotImplementedError`` for anything else. A caller with non-ASCII credentials
-must prepare them first and pass the prepared form; the RFC 5769 sec. 2.4 and RFC 8489
-appendix B.1 vectors do exactly that (their password is written both before and after
-processing, and the key is derived from the processed "TheMatrIX").
+RFC 8489 requires usernames, realms and passwords to be processed with the OpaqueString
+profile of RFC 8265 before use. ``opaque_string`` is :func:`turnkit.precis.opaque_string`
+(PRECIS FreeformClass over the IANA Unicode 6.3.0 table). The RFC 5769 sec. 2.4 and RFC 8489
+appendix B.1 vectors print their password as "TheMatrIX" after what they call OpaqueString
+processing; that is SASLprep output, which OpaqueString does not produce, so those vectors
+use ``prepared=True`` (see the precis module docstring).
 
 Not here: the TURN "REST API" scheme (timestamped username, HMAC password). RFC 7635 does
 not define it (it defines OAuth 2.0 access tokens for STUN, sec. 4), no RFC does, and the
@@ -17,6 +15,8 @@ roadmap records that as a non-goal until a document can be cited.
 from __future__ import annotations
 
 import hashlib
+
+from .precis import opaque_string
 
 __all__ = [
     "MD5",
@@ -29,21 +29,6 @@ __all__ = [
 
 MD5 = 0x0001  # RFC 8489 sec. 18.5 password algorithm numbers
 SHA256 = 0x0002
-
-
-def opaque_string(text: str) -> str:
-    """OpaqueString (RFC 8265) for ASCII input; other input is not implemented.
-
-    ASCII graphic characters and the space are unchanged by the profile. Control characters
-    are refused. Anything outside ASCII raises ``NotImplementedError`` rather than guess.
-    """
-    if not text.isascii():
-        raise NotImplementedError(
-            "OpaqueString (RFC 8265) for non-ASCII text is not implemented: pass prepared text"
-        )
-    if any(ord(c) < 0x20 or ord(c) == 0x7F for c in text):
-        raise ValueError("control characters are not allowed in an OpaqueString")
-    return text
 
 
 def _kept(text: str) -> str:

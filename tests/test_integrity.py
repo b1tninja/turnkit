@@ -204,9 +204,24 @@ def test_keys_from_the_rfc_examples():
     )
     assert len(credentials.long_term_key("user", "realm", "pass", credentials.SHA256)) == 32
     assert credentials.short_term_key("pw") == b"pw"
-    with pytest.raises(NotImplementedError, match="OpaqueString"):
-        credentials.opaque_string("pässword")
-    with pytest.raises(ValueError, match="control"):
+    assert credentials.opaque_string("pässword") == "pässword"
+    with pytest.raises(ValueError, match=r"U\+0000"):
         credentials.opaque_string("a\x00b")
     with pytest.raises(ValueError, match="unknown password algorithm"):
         credentials.long_term_key("u", "r", "p", 0x0003)
+
+
+def test_opaque_string_vectors():
+    # non-ASCII credentials are prepared, not refused: NFC composes and a non-ASCII space
+    # maps to SPACE, so equal-looking inputs give one key
+    assert credentials.opaque_string("pa\u0308ss\u00a0word") == "p\u00e4ss word"
+    decomposed = credentials.long_term_key("user", "realm", "pa\u0308ss")
+    assert decomposed == credentials.long_term_key("user", "realm", "p\u00e4ss")
+    assert decomposed != credentials.long_term_key("user", "realm", "pass")
+    name = "\u30de\u30c8"
+    assert credentials.userhash(name, "example.org") == credentials.userhash(
+        name, "example.org", prepared=True
+    )
+    # the RFC 5769 sec. 2.4 password is SASLprep's input, not valid OpaqueString input
+    with pytest.raises(ValueError, match=r"U\+00AD"):
+        credentials.short_term_key("The\u00adM\u00aatr\u2168")
